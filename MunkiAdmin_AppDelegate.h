@@ -23,6 +23,8 @@
 #import "StringObjectMO.h"
 #import "DirectoryMO.h"
 #import "PackageSourceListItemMO.h"
+#import "ManifestSourceListItemMO.h"
+#import "ManifestDirectoryMO.h"
 #import "PreferencesController.h"
 #import "PackageInfosArrayController.h"
 #import "CatalogsArrayController.h"

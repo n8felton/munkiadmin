@@ -10,9 +10,9 @@
 
 #import "ManifestsView.h"
 #import "PackageSourceListItemMO.h"
-#import "DirectoryMO.h"
+#import "ManifestDirectoryMO.h"
 #import "ImageAndTitleCell.h"
-#import "PackageMO.h"
+#import "ManifestMO.h"
 
 #define kMinSplitViewWidth      200.0f
 #define kMaxSplitViewWidth      400.0f
@@ -58,10 +58,8 @@
     
     NSSortDescriptor *sortByTitle = [NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES selector:@selector(localizedStandardCompare:)];
     NSSortDescriptor *sortByIndex = [NSSortDescriptor sortDescriptorWithKey:@"originalIndex" ascending:YES selector:@selector(compare:)];
-    NSSortDescriptor *sortByMunkiName = [NSSortDescriptor sortDescriptorWithKey:@"munki_name" ascending:YES selector:@selector(localizedStandardCompare:)];
-    NSSortDescriptor *sortByMunkiVersion = [NSSortDescriptor sortDescriptorWithKey:@"munki_version" ascending:YES selector:@selector(localizedStandardCompare:)];
     [self.directoriesTreeController setSortDescriptors:[NSArray arrayWithObjects:sortByIndex,sortByTitle, nil]];
-    [self.manifestsArrayController setSortDescriptors:[NSArray arrayWithObjects:sortByMunkiName, sortByMunkiVersion, nil]];
+    [self.manifestsArrayController setSortDescriptors:[NSArray arrayWithObjects:sortByTitle, nil]];
     
     self.rightPlaceHolder.fillGradient = [[[NSGradient alloc] initWithStartingColor:[NSColor colorWithCalibratedWhite:0.95 alpha:1.0] 
                                                                         endingColor:[NSColor colorWithCalibratedWhite:1.0 alpha:1.0]] autorelease];
@@ -142,7 +140,7 @@
     }
     else 
     {        
-        objectValue = [(PackageSourceListItemMO *)[item representedObject] dictValue];
+        objectValue = [(ManifestSourceListItemMO *)[item representedObject] dictValue];
     }
     
     return objectValue;

@@ -15,6 +15,7 @@
 #import "ManifestInfoMO.h"
 #import "StringObjectMO.h"
 #import "DirectoryMO.h"
+#import "ManifestDirectoryMO.H"
 
 @implementation RelationshipScanner
 
@@ -140,6 +141,27 @@
     [getPackages release];
     
     
+    // Link to DirectoryMO object
+    NSFetchRequest *getAllManifestDirectories = [[NSFetchRequest alloc] init];
+    [getAllManifestDirectories setEntity:[NSEntityDescription entityForName:@"ManifestDirectory" inManagedObjectContext:moc]];
+    NSArray *allManifestDirectories = [moc executeFetchRequest:getAllManifestDirectories error:nil];
+    [getAllManifestDirectories release];
+    
+    
+    ManifestDirectoryMO *baseManifestDirectory;
+    NSFetchRequest *fetchBaseDirectory = [[NSFetchRequest alloc] init];
+    [fetchBaseDirectory setEntity:[NSEntityDescription entityForName:@"ManifestDirectory" inManagedObjectContext:moc]];
+    NSPredicate *parentPredicate = [NSPredicate predicateWithFormat:@"title == %@", @"All Manifests"];
+    [fetchBaseDirectory setPredicate:parentPredicate];
+    NSUInteger foundItems = [moc countForFetchRequest:fetchBaseDirectory error:nil];
+    if (foundItems > 0) {
+        baseManifestDirectory = [[moc executeFetchRequest:fetchBaseDirectory error:nil] objectAtIndex:0];
+    } else {
+        baseManifestDirectory = nil;
+    }
+    [fetchBaseDirectory release];
+    
+    
     // Loop through all known manifest objects
     // and configure contents for each
     
@@ -148,6 +170,10 @@
         ManifestMO *currentManifest = (ManifestMO *)obj;
         NSDictionary *originalManifestDict = (NSDictionary *)currentManifest.originalManifest;
         
+        NSPredicate *parentPredicate = [NSPredicate predicateWithFormat:@"originalURL == %@", [currentManifest.manifestURL URLByDeletingLastPathComponent]];
+        ManifestDirectoryMO *aDir = [[allManifestDirectories filteredArrayUsingPredicate:parentPredicate] objectAtIndex:0];
+        [currentManifest addSourceListItemsObject:aDir];
+        [currentManifest addSourceListItemsObject:baseManifestDirectory];
         
         NSArray *existingCatalogTitles = [[currentManifest.catalogInfos valueForKeyPath:@"catalog.title"] allObjects];
         NSArray *newCatalogTitles = [self.allCatalogs valueForKeyPath:@"title"];

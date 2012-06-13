@@ -102,6 +102,8 @@
 		FEE024B415888F75000E4B8A /* ManifestsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FEE024B215888F75000E4B8A /* ManifestsView.xib */; };
 		FEE024BA15889262000E4B8A /* _ManifestSourceListItemMO.m in Sources */ = {isa = PBXBuildFile; fileRef = FEE024B715889262000E4B8A /* _ManifestSourceListItemMO.m */; };
 		FEE024BB15889262000E4B8A /* ManifestSourceListItemMO.m in Sources */ = {isa = PBXBuildFile; fileRef = FEE024B915889262000E4B8A /* ManifestSourceListItemMO.m */; };
+		FEE024C01588992B000E4B8A /* _ManifestDirectoryMO.m in Sources */ = {isa = PBXBuildFile; fileRef = FEE024BD1588992A000E4B8A /* _ManifestDirectoryMO.m */; };
+		FEE024C11588992B000E4B8A /* ManifestDirectoryMO.m in Sources */ = {isa = PBXBuildFile; fileRef = FEE024BF1588992A000E4B8A /* ManifestDirectoryMO.m */; };
 		FEE1A82F147BB82A00FA6E1E /* MunkiAdmin.icns in Resources */ = {isa = PBXBuildFile; fileRef = FEE1A82E147BB82A00FA6E1E /* MunkiAdmin.icns */; };
 		FEEBE375145FC5750004791A /* RelationshipScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = FEEBE374145FC5750004791A /* RelationshipScanner.m */; };
 		FEED6894149F3A44006ABA1E /* AdvancedPackageEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = FEED6893149F3A44006ABA1E /* AdvancedPackageEditor.m */; };
@@ -280,6 +282,10 @@
 		FEE024B715889262000E4B8A /* _ManifestSourceListItemMO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ManifestSourceListItemMO.m; sourceTree = "<group>"; };
 		FEE024B815889262000E4B8A /* ManifestSourceListItemMO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManifestSourceListItemMO.h; sourceTree = "<group>"; };
 		FEE024B915889262000E4B8A /* ManifestSourceListItemMO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManifestSourceListItemMO.m; sourceTree = "<group>"; };
+		FEE024BC1588992A000E4B8A /* _ManifestDirectoryMO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _ManifestDirectoryMO.h; sourceTree = "<group>"; };
+		FEE024BD1588992A000E4B8A /* _ManifestDirectoryMO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ManifestDirectoryMO.m; sourceTree = "<group>"; };
+		FEE024BE1588992A000E4B8A /* ManifestDirectoryMO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManifestDirectoryMO.h; sourceTree = "<group>"; };
+		FEE024BF1588992A000E4B8A /* ManifestDirectoryMO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManifestDirectoryMO.m; sourceTree = "<group>"; };
 		FEE1A82E147BB82A00FA6E1E /* MunkiAdmin.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = MunkiAdmin.icns; path = Graphics/MunkiAdmin.icns; sourceTree = "<group>"; };
 		FEEBE373145FC5750004791A /* RelationshipScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RelationshipScanner.h; path = "NSOperation Subclasses/RelationshipScanner.h"; sourceTree = "<group>"; };
 		FEEBE374145FC5750004791A /* RelationshipScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RelationshipScanner.m; path = "NSOperation Subclasses/RelationshipScanner.m"; sourceTree = "<group>"; };
@@ -432,6 +438,10 @@
 		F5A951B910FB30B60034ED28 /* MunkiAdmin_DataModel */ = {
 			isa = PBXGroup;
 			children = (
+				FEE024BC1588992A000E4B8A /* _ManifestDirectoryMO.h */,
+				FEE024BD1588992A000E4B8A /* _ManifestDirectoryMO.m */,
+				FEE024BE1588992A000E4B8A /* ManifestDirectoryMO.h */,
+				FEE024BF1588992A000E4B8A /* ManifestDirectoryMO.m */,
 				FEE024B615889262000E4B8A /* _ManifestSourceListItemMO.h */,
 				FEE024B715889262000E4B8A /* _ManifestSourceListItemMO.m */,
 				FEE024B815889262000E4B8A /* ManifestSourceListItemMO.h */,
@@ -762,6 +772,8 @@
 				FEE024B315888F75000E4B8A /* ManifestsView.m in Sources */,
 				FEE024BA15889262000E4B8A /* _ManifestSourceListItemMO.m in Sources */,
 				FEE024BB15889262000E4B8A /* ManifestSourceListItemMO.m in Sources */,
+				FEE024C01588992B000E4B8A /* _ManifestDirectoryMO.m in Sources */,
+				FEE024C11588992B000E4B8A /* ManifestDirectoryMO.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
