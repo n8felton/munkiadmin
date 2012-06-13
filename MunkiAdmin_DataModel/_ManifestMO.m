@@ -25,6 +25,7 @@ const struct ManifestMORelationships ManifestMORelationships = {
 	.manifestInfos = @"manifestInfos",
 	.optionalInstalls = @"optionalInstalls",
 	.optionalInstallsFaster = @"optionalInstallsFaster",
+	.sourceListItems = @"sourceListItems",
 };
 
 const struct ManifestMOFetchedProperties ManifestMOFetchedProperties = {
@@ -280,6 +281,19 @@ const struct ManifestMOFetchedProperties ManifestMOFetchedProperties = {
 	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"optionalInstallsFaster"];
   
 	[self didAccessValueForKey:@"optionalInstallsFaster"];
+	return result;
+}
+	
+
+@dynamic sourceListItems;
+
+	
+- (NSMutableSet*)sourceListItemsSet {
+	[self willAccessValueForKey:@"sourceListItems"];
+  
+	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"sourceListItems"];
+  
+	[self didAccessValueForKey:@"sourceListItems"];
 	return result;
 }
 	

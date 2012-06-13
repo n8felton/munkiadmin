@@ -18,6 +18,7 @@
 #import "AdvancedPackageEditor.h"
 #import "PredicateEditor.h"
 #import "PackagesView.h"
+#import "ManifestsView.h"
 
 @implementation MunkiAdmin_AppDelegate
 @synthesize installsItemsArrayController;
@@ -331,6 +332,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(undoManagerDidUndo:) name:NSUndoManagerDidUndoChangeNotification object:nil];
 	
     packagesViewController = [[PackagesView alloc] initWithNibName:@"PackagesView" bundle:nil];
+    manifestsViewController = [[ManifestsView alloc] initWithNibName:@"ManifestsView" bundle:nil];
     manifestDetailViewController = [[ManifestDetailView alloc] initWithNibName:@"ManifestDetailView" bundle:nil];
     addItemsWindowController = [[SelectPkginfoItemsWindow alloc] initWithWindowNibName:@"SelectPkginfoItemsWindow"];
     selectManifestsWindowController = [[SelectManifestItemsWindow alloc] initWithWindowNibName:@"SelectManifestItemsWindow"];
@@ -372,11 +374,9 @@
 		[mainSegmentedControl setSelectedSegment:1];
 	}
 	else if ([self.defaults integerForKey:@"startupSelectedView"] == 2) {
-		self.selectedViewTag = 2;
+        self.selectedViewTag = 2;
 		self.selectedViewDescr = @"Manifests";
-		currentDetailView = [manifestDetailViewController view];
-		currentSourceView = manifestsListView;
-        currentWholeView = self.mainSplitView;
+        currentWholeView = [manifestsViewController view];
 		[mainSegmentedControl setSelectedSegment:2];
 	}
 	else {
@@ -2813,14 +2813,14 @@
 			}
 			break;
 		case 3:
-			if (currentDetailView != [manifestDetailViewController view]) {
+            if (currentWholeView != [manifestsViewController view]) {
 				self.selectedViewDescr = @"Manifests";
-                currentWholeView = self.mainSplitView;
-				currentDetailView = [manifestDetailViewController view];
-				currentSourceView = manifestsListView;
-				[mainSegmentedControl setSelectedSegment:2];
+                currentWholeView = [manifestsViewController view];
+                currentDetailView = nil;
+                currentSourceView = nil;
+                [mainSegmentedControl setSelectedSegment:2];
 				[self changeItemView];
-			}
+            }
 			break;
 		default:
 			break;
@@ -2849,11 +2849,11 @@
             }
 			break;
 		case 2:
-            if (currentDetailView != [manifestDetailViewController view]) {
+            if (currentWholeView != [manifestsViewController view]) {
 				self.selectedViewDescr = @"Manifests";
-                currentWholeView = self.mainSplitView;
-				currentDetailView = [manifestDetailViewController view];
-				currentSourceView = manifestsListView;
+                currentDetailView = nil;
+                currentSourceView = nil;
+                currentWholeView = [manifestsViewController view];
 				[self changeItemView];
             }
 			break;
@@ -2921,7 +2921,20 @@
         [[packagesViewController directoriesOutlineView] expandItem:nil expandChildren:YES];
         [[packagesViewController directoriesOutlineView] reloadData];
         [[packagesViewController packagesArrayController] rearrangeObjects];
-    } else {
+    }
+    else if (currentWholeView == [manifestsViewController view]) {
+        // remove the old subview
+        [self removeSubviews];
+        
+        [[self.window contentView] addSubview:[manifestsViewController view]];
+        [[manifestsViewController view] setFrame:[[self.window contentView] frame]];
+        [[manifestsViewController view] setFrameOrigin:NSMakePoint(0,0)];
+        [[manifestsViewController view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        [[manifestsViewController directoriesOutlineView] expandItem:nil expandChildren:YES];
+        [[manifestsViewController directoriesOutlineView] reloadData];
+        [[manifestsViewController manifestsArrayController] rearrangeObjects];
+    }
+    else {
         // remove the old subview
         [self removeSubviews];
         

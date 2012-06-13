@@ -37,6 +37,7 @@
 @class SelectManifestItemsWindow;
 @class PackageNameEditor;
 @class PackagesView;
+@class ManifestsView;
 @class AdvancedPackageEditor;
 @class PredicateEditor;
 
@@ -61,6 +62,7 @@
 	NSView *packagesDetailView;
 	NSView *manifestsDetailView;
     PackagesView *packagesViewController;
+    ManifestsView *manifestsViewController;
     ManifestDetailView *manifestDetailViewController;
     SelectPkginfoItemsWindow *addItemsWindowController;
     SelectManifestItemsWindow *selectManifestsWindowController;

@@ -26,6 +26,7 @@ extern const struct ManifestMORelationships {
 	 NSString *manifestInfos;
 	 NSString *optionalInstalls;
 	 NSString *optionalInstallsFaster;
+	 NSString *sourceListItems;
 } ManifestMORelationships;
 
 extern const struct ManifestMOFetchedProperties {
@@ -51,6 +52,7 @@ extern const struct ManifestMOFetchedProperties {
 @class ManifestInfoMO;
 @class OptionalInstallMO;
 @class StringObjectMO;
+@class ManifestSourceListItemMO;
 
 @class NSObject;
 @class NSObject;
@@ -198,6 +200,13 @@ extern const struct ManifestMOFetchedProperties {
 
 
 
+@property (nonatomic, retain) NSSet* sourceListItems;
+
+- (NSMutableSet*)sourceListItemsSet;
+
+
+
+
 @property (nonatomic, readonly) NSArray *allIncludedManifests;
 
 @property (nonatomic, readonly) NSArray *allManagedInstalls;
@@ -287,6 +296,11 @@ extern const struct ManifestMOFetchedProperties {
 - (void)removeOptionalInstallsFaster:(NSSet*)value_;
 - (void)addOptionalInstallsFasterObject:(StringObjectMO*)value_;
 - (void)removeOptionalInstallsFasterObject:(StringObjectMO*)value_;
+
+- (void)addSourceListItems:(NSSet*)value_;
+- (void)removeSourceListItems:(NSSet*)value_;
+- (void)addSourceListItemsObject:(ManifestSourceListItemMO*)value_;
+- (void)removeSourceListItemsObject:(ManifestSourceListItemMO*)value_;
 
 @end
 
@@ -384,6 +398,11 @@ extern const struct ManifestMOFetchedProperties {
 
 - (NSMutableSet*)primitiveOptionalInstallsFaster;
 - (void)setPrimitiveOptionalInstallsFaster:(NSMutableSet*)value;
+
+
+
+- (NSMutableSet*)primitiveSourceListItems;
+- (void)setPrimitiveSourceListItems:(NSMutableSet*)value;
 
 
 @end
