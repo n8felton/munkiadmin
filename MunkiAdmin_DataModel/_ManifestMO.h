@@ -5,6 +5,9 @@
 
 
 extern const struct ManifestMOAttributes {
+	 NSString *manifestDateCreated;
+	 NSString *manifestDateLastOpened;
+	 NSString *manifestDateModified;
 	 NSString *manifestURL;
 	 NSString *originalManifest;
 	 NSString *title;
@@ -54,6 +57,9 @@ extern const struct ManifestMOFetchedProperties {
 @class StringObjectMO;
 @class ManifestSourceListItemMO;
 
+
+
+
 @class NSObject;
 @class NSObject;
 
@@ -66,6 +72,30 @@ extern const struct ManifestMOFetchedProperties {
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 - (ManifestMOID*)objectID;
+
+
+
+
+@property (nonatomic, retain) NSDate* manifestDateCreated;
+
+
+//- (BOOL)validateManifestDateCreated:(id*)value_ error:(NSError**)error_;
+
+
+
+
+@property (nonatomic, retain) NSDate* manifestDateLastOpened;
+
+
+//- (BOOL)validateManifestDateLastOpened:(id*)value_ error:(NSError**)error_;
+
+
+
+
+@property (nonatomic, retain) NSDate* manifestDateModified;
+
+
+//- (BOOL)validateManifestDateModified:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -305,6 +335,24 @@ extern const struct ManifestMOFetchedProperties {
 @end
 
 @interface _ManifestMO (CoreDataGeneratedPrimitiveAccessors)
+
+
+- (NSDate*)primitiveManifestDateCreated;
+- (void)setPrimitiveManifestDateCreated:(NSDate*)value;
+
+
+
+
+- (NSDate*)primitiveManifestDateLastOpened;
+- (void)setPrimitiveManifestDateLastOpened:(NSDate*)value;
+
+
+
+
+- (NSDate*)primitiveManifestDateModified;
+- (void)setPrimitiveManifestDateModified:(NSDate*)value;
+
+
 
 
 - (id)primitiveManifestURL;

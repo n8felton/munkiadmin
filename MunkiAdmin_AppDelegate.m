@@ -1299,9 +1299,9 @@
     [self.packageInfosArrayController setManagedObjectContext:nil];
     [self.allPackagesArrayController setManagedObjectContext:nil];
     [[packagesViewController packagesArrayController] setManagedObjectContext:nil];
-    [[packagesViewController directoriesTreeController] setManagedObjectContext:nil];
+    //[[packagesViewController directoriesTreeController] setManagedObjectContext:nil];
     [[manifestsViewController manifestsArrayController] setManagedObjectContext:nil];
-    [[manifestsViewController directoriesTreeController] setManagedObjectContext:nil];
+    //[[manifestsViewController directoriesTreeController] setManagedObjectContext:nil];
     [self.manifestsArrayController setManagedObjectContext:nil];
 }
 
@@ -1315,10 +1315,15 @@
         
     } else if ([mode isEqualToString:@"manifests"]) {
         
+        NSUInteger defaultIndexes[] = {0,0};
+        
         // Configure packages view source list
         [[packagesViewController directoriesOutlineView] expandItem:nil expandChildren:YES];
-        NSUInteger defaultIndexes[] = {0,0};
         [[packagesViewController directoriesTreeController] setSelectionIndexPath:[NSIndexPath indexPathWithIndexes:defaultIndexes length:2]];
+        
+        // Configure manifests view source list
+        [[manifestsViewController directoriesOutlineView] expandItem:nil expandChildren:YES];
+        [[manifestsViewController directoriesTreeController] setSelectionIndexPath:[NSIndexPath indexPathWithIndexes:defaultIndexes length:2]];
     }
 }
 
@@ -2266,6 +2271,13 @@
     }
     [groupItemRequest release];
     
+    DirectoryMO *basePkgsInfoDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"Directory" inManagedObjectContext:self.managedObjectContext];
+    basePkgsInfoDirectory.originalURL = self.pkgsInfoURL;
+    basePkgsInfoDirectory.title = @"pkgsinfo";
+    basePkgsInfoDirectory.type = @"regular";
+    basePkgsInfoDirectory.parent = directoriesGroupItem;
+    basePkgsInfoDirectory.originalIndexValue = 10;
+    
     NSArray *keysToget = [NSArray arrayWithObjects:NSURLNameKey, NSURLLocalizedNameKey, NSURLIsDirectoryKey, nil];
 	NSFileManager *fm = [NSFileManager defaultManager];
         
@@ -2292,7 +2304,7 @@
                 newDirectory.title = newTitle;
                 NSURL *parentDirectory = [anURL URLByDeletingLastPathComponent];
                 if ([parentDirectory isEqual:self.pkgsInfoURL]) {
-                    newDirectory.parent = directoriesGroupItem;
+                    newDirectory.parent = basePkgsInfoDirectory;
                 } else {
                     NSFetchRequest *parentRequest = [[NSFetchRequest alloc] init];
                     [parentRequest setEntity:[NSEntityDescription entityForName:@"Directory" inManagedObjectContext:self.managedObjectContext]];
@@ -2330,6 +2342,13 @@
     }
     [groupItemRequest release];
     
+    ManifestDirectoryMO *baseManifestsDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext];
+    baseManifestsDirectory.originalURL = self.manifestsURL;
+    baseManifestsDirectory.title = @"manifests";
+    baseManifestsDirectory.type = @"regular";
+    baseManifestsDirectory.parent = directoriesGroupItem;
+    baseManifestsDirectory.originalIndexValue = 10;
+    
     NSArray *keysToget = [NSArray arrayWithObjects:NSURLNameKey, NSURLLocalizedNameKey, NSURLIsDirectoryKey, nil];
 	NSFileManager *fm = [NSFileManager defaultManager];
     
@@ -2355,8 +2374,8 @@
                 [anURL getResourceValue:&newTitle forKey:NSURLNameKey error:nil];
                 newDirectory.title = newTitle;
                 NSURL *parentDirectory = [anURL URLByDeletingLastPathComponent];
-                if ([parentDirectory isEqual:self.pkgsInfoURL]) {
-                    newDirectory.parent = directoriesGroupItem;
+                if ([parentDirectory isEqual:self.manifestsURL]) {
+                    newDirectory.parent = baseManifestsDirectory;
                 } else {
                     NSFetchRequest *parentRequest = [[NSFetchRequest alloc] init];
                     [parentRequest setEntity:[NSEntityDescription entityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext]];
@@ -2399,15 +2418,6 @@
     
     [self configureSourceListDirectoriesSection];
     
-    /*
-    PackageSourceListItemMO *newSourceListItem = [NSEntityDescription insertNewObjectForEntityForName:@"PackageSourceListItem" inManagedObjectContext:self.managedObjectContext];
-    newSourceListItem.title = @"DIRECTORIES";
-    newSourceListItem.originalIndexValue = 1;
-    newSourceListItem.parent = nil;
-    newSourceListItem.isGroupItemValue = YES;
-    */
-    
-    
 	NSArray *keysToget = [NSArray arrayWithObjects:NSURLNameKey, NSURLLocalizedNameKey, NSURLIsDirectoryKey, nil];
 	NSFileManager *fm = [NSFileManager defaultManager];
     
@@ -2427,31 +2437,6 @@
 			
 		} else {
             //NSLog(@"Got directory: %@", [anURL relativePath]);
-            /*
-            DirectoryMO *newDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"Directory" inManagedObjectContext:self.managedObjectContext];
-            newDirectory.originalURL = anURL;
-            newDirectory.originalIndexValue = 10;
-            newDirectory.type = @"regular";
-            NSString *newTitle;
-            [anURL getResourceValue:&newTitle forKey:NSURLNameKey error:nil];
-            newDirectory.title = newTitle;
-            NSURL *parentDirectory = [anURL URLByDeletingLastPathComponent];
-            if ([parentDirectory isEqual:self.pkgsInfoURL]) {
-                newDirectory.parent = newSourceListItem;
-            } else {
-                NSFetchRequest *request = [[NSFetchRequest alloc] init];
-				[request setEntity:[NSEntityDescription entityForName:@"Directory" inManagedObjectContext:self.managedObjectContext]];
-				NSPredicate *parentPredicate = [NSPredicate predicateWithFormat:@"originalURL == %@", parentDirectory];
-				[request setPredicate:parentPredicate];
-				NSUInteger foundItems = [self.managedObjectContext countForFetchRequest:request error:nil];
-				if (foundItems > 0) {
-					DirectoryMO *parent = [[self.managedObjectContext executeFetchRequest:request error:nil] objectAtIndex:0];
-                    NSLog(@"Got parent: %@", parent.title);
-                    newDirectory.parent = parent;
-				}
-				[request release];
-            }
-             */
         }
 	}
     

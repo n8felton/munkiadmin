@@ -4,6 +4,9 @@
 #import "_ManifestMO.h"
 
 const struct ManifestMOAttributes ManifestMOAttributes = {
+	.manifestDateCreated = @"manifestDateCreated",
+	.manifestDateLastOpened = @"manifestDateLastOpened",
+	.manifestDateModified = @"manifestDateModified",
 	.manifestURL = @"manifestURL",
 	.originalManifest = @"originalManifest",
 	.title = @"title",
@@ -65,6 +68,27 @@ const struct ManifestMOFetchedProperties ManifestMOFetchedProperties = {
 
 	return keyPaths;
 }
+
+
+
+
+@dynamic manifestDateCreated;
+
+
+
+
+
+
+@dynamic manifestDateLastOpened;
+
+
+
+
+
+
+@dynamic manifestDateModified;
+
+
 
 
 
