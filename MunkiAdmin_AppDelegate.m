@@ -2362,8 +2362,8 @@
             
             NSFetchRequest *checkForExistingRequest = [[NSFetchRequest alloc] init];
             [checkForExistingRequest setEntity:[NSEntityDescription entityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext]];
-            NSPredicate *parentPredicate = [NSPredicate predicateWithFormat:@"originalURL == %@", anURL];
-            [checkForExistingRequest setPredicate:parentPredicate];
+            NSPredicate *originalURLPredicate = [NSPredicate predicateWithFormat:@"originalURL == %@", anURL];
+            [checkForExistingRequest setPredicate:originalURLPredicate];
             NSUInteger foundItems = [self.managedObjectContext countForFetchRequest:checkForExistingRequest error:nil];
             if (foundItems == 0) {
                 ManifestDirectoryMO *newDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext];
@@ -2374,20 +2374,16 @@
                 [anURL getResourceValue:&newTitle forKey:NSURLNameKey error:nil];
                 newDirectory.title = newTitle;
                 NSURL *parentDirectory = [anURL URLByDeletingLastPathComponent];
-                if ([parentDirectory isEqual:self.manifestsURL]) {
-                    newDirectory.parent = baseManifestsDirectory;
-                } else {
-                    NSFetchRequest *parentRequest = [[NSFetchRequest alloc] init];
-                    [parentRequest setEntity:[NSEntityDescription entityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext]];
-                    NSPredicate *parentPredicate = [NSPredicate predicateWithFormat:@"originalURL == %@", parentDirectory];
-                    [parentRequest setPredicate:parentPredicate];
-                    NSUInteger foundItems = [self.managedObjectContext countForFetchRequest:parentRequest error:nil];
-                    if (foundItems > 0) {
-                        ManifestDirectoryMO *parent = [[self.managedObjectContext executeFetchRequest:parentRequest error:nil] objectAtIndex:0];
-                        newDirectory.parent = parent;
-                    }
-                    [parentRequest release];
+                NSFetchRequest *parentRequest = [[NSFetchRequest alloc] init];
+                [parentRequest setEntity:[NSEntityDescription entityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext]];
+                NSPredicate *parentPredicate = [NSPredicate predicateWithFormat:@"originalURL == %@", parentDirectory];
+                [parentRequest setPredicate:parentPredicate];
+                NSUInteger foundItems = [self.managedObjectContext countForFetchRequest:parentRequest error:nil];
+                if (foundItems > 0) {
+                    ManifestDirectoryMO *parent = [[self.managedObjectContext executeFetchRequest:parentRequest error:nil] objectAtIndex:0];
+                    newDirectory.parent = parent;
                 }
+                [parentRequest release];
             }
             [checkForExistingRequest release];
         }
@@ -2410,7 +2406,7 @@
     newSourceListItem2.isGroupItemValue = YES;
     
     DirectoryMO *newDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"Directory" inManagedObjectContext:self.managedObjectContext];
-    newDirectory.originalURL = self.pkgsInfoURL;
+    newDirectory.originalURL = nil;
     newDirectory.title = @"All Packages";
     newDirectory.type = @"smart";
     newDirectory.parent = newSourceListItem2;
@@ -2508,7 +2504,7 @@
     newSourceListItem2.isGroupItemValue = YES;
     
     ManifestDirectoryMO *newDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext];
-    newDirectory.originalURL = self.manifestsURL;
+    newDirectory.originalURL = nil;
     newDirectory.title = @"All Manifests";
     newDirectory.type = @"smart";
     newDirectory.parent = newSourceListItem2;
