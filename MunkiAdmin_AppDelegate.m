@@ -770,16 +770,19 @@
 		manifest.title = [createNewManifestCustomView stringValue];
 		manifest.manifestURL = [self.manifestsURL URLByAppendingPathComponent:manifest.title];
 		
-		for (CatalogMO *aCatalog in [self allObjectsForEntity:@"Catalog"]) {
-			CatalogInfoMO *newCatalogInfo;
-			newCatalogInfo = [NSEntityDescription insertNewObjectForEntityForName:@"CatalogInfo" inManagedObjectContext:moc];
-			newCatalogInfo.catalog.title = aCatalog.title;
-			[aCatalog addManifestsObject:manifest];
-			newCatalogInfo.manifest = manifest;
-			[aCatalog addCatalogInfosObject:newCatalogInfo];
-			newCatalogInfo.isEnabledForManifestValue = NO;
-		}
-		
+        [[manifest manifestInfoDictionary] writeToURL:(NSURL *)manifest.manifestURL atomically:YES];
+        
+        RelationshipScanner *manifestRelationships = [RelationshipScanner manifestScanner];
+        manifestRelationships.delegate = self;
+        
+        ManifestScanner *scanOp = [[[ManifestScanner alloc] initWithURL:manifest.manifestURL] autorelease];
+        scanOp.delegate = self;
+        [manifestRelationships addDependency:scanOp];
+        [self.operationQueue addOperation:scanOp];
+        [self.operationQueue addOperation:manifestRelationships];
+        
+        [self showProgressPanel];
+        
     } else if ( result == NSAlertSecondButtonReturn ) {
         
     }
@@ -2103,7 +2106,7 @@
 		
 		if (![mergedInfoDict isEqualToDictionary:infoDictOnDisk]) {
 			NSLog(@"Changes detected in %@. Writing new manifest to disk", [(NSURL *)aManifest.manifestURL relativePath]);
-			[mergedInfoDict writeToURL:(NSURL *)aManifest.manifestURL atomically:NO];
+			[mergedInfoDict writeToURL:(NSURL *)aManifest.manifestURL atomically:YES];
 		} else {
 			//NSLog(@"No changes detected in %@", [(NSURL *)aManifest.manifestURL relativePath]);
 		}
@@ -2342,19 +2345,30 @@
     [groupItemRequest setEntity:[NSEntityDescription entityForName:@"ManifestSourceListItem" inManagedObjectContext:self.managedObjectContext]];
     NSPredicate *parentPredicate = [NSPredicate predicateWithFormat:@"title == %@", @"DIRECTORIES"];
     [groupItemRequest setPredicate:parentPredicate];
-    NSUInteger foundItems = [self.managedObjectContext countForFetchRequest:groupItemRequest error:nil];
-    if (foundItems > 0) {
+    if ([self.managedObjectContext countForFetchRequest:groupItemRequest error:nil] > 0) {
         directoriesGroupItem = [[self.managedObjectContext executeFetchRequest:groupItemRequest error:nil] objectAtIndex:0];
     } else {
         directoriesGroupItem = [NSEntityDescription insertNewObjectForEntityForName:@"ManifestSourceListItem" inManagedObjectContext:self.managedObjectContext];
-        directoriesGroupItem.title = @"DIRECTORIES";
-        directoriesGroupItem.originalIndexValue = 1;
-        directoriesGroupItem.parent = nil;
-        directoriesGroupItem.isGroupItemValue = YES;
     }
     [groupItemRequest release];
     
-    ManifestDirectoryMO *baseManifestsDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext];
+    directoriesGroupItem.title = @"DIRECTORIES";
+    directoriesGroupItem.originalIndexValue = 1;
+    directoriesGroupItem.parent = nil;
+    directoriesGroupItem.isGroupItemValue = YES;
+    
+    ManifestDirectoryMO *baseManifestsDirectory = nil;    
+    NSFetchRequest *baseManifestDirRequest = [[NSFetchRequest alloc] init];
+    [baseManifestDirRequest setEntity:[NSEntityDescription entityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext]];
+    NSPredicate *originalURLPredicate = [NSPredicate predicateWithFormat:@"originalURL == %@", self.manifestsURL];
+    [baseManifestDirRequest setPredicate:originalURLPredicate];
+    if ([self.managedObjectContext countForFetchRequest:baseManifestDirRequest error:nil] > 0) {
+        baseManifestsDirectory = [[self.managedObjectContext executeFetchRequest:baseManifestDirRequest error:nil] objectAtIndex:0];
+    } else {
+        baseManifestsDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext];
+    }
+    [baseManifestDirRequest release];
+    
     baseManifestsDirectory.originalURL = self.manifestsURL;
     baseManifestsDirectory.title = @"manifests";
     baseManifestsDirectory.type = @"regular";
@@ -2521,6 +2535,20 @@
     newDirectory.type = @"smart";
     newDirectory.parent = newSourceListItem2;
     newDirectory.originalIndexValue = 10;
+    
+    ManifestDirectoryMO *groupManifestDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext];
+    groupManifestDirectory.originalURL = nil;
+    groupManifestDirectory.title = @"Group Manifests";
+    groupManifestDirectory.type = @"smart";
+    groupManifestDirectory.parent = newSourceListItem2;
+    groupManifestDirectory.originalIndexValue = 10;
+    
+    ManifestDirectoryMO *clientManifestDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"ManifestDirectory" inManagedObjectContext:self.managedObjectContext];
+    clientManifestDirectory.originalURL = nil;
+    clientManifestDirectory.title = @"Client Manifests";
+    clientManifestDirectory.type = @"smart";
+    clientManifestDirectory.parent = newSourceListItem2;
+    clientManifestDirectory.originalIndexValue = 10;
     
     [self configureManifestSourceList];
 	
