@@ -311,16 +311,16 @@
     [getAllDirectories release];
     
     
-    DirectoryMO *basePkginfoDirectory;
+    DirectoryMO *allPackagesDirectory;
     NSFetchRequest *fetchBaseDirectory = [[NSFetchRequest alloc] init];
     [fetchBaseDirectory setEntity:[NSEntityDescription entityForName:@"Directory" inManagedObjectContext:moc]];
     NSPredicate *parentPredicate = [NSPredicate predicateWithFormat:@"title == %@", @"All Packages"];
     [fetchBaseDirectory setPredicate:parentPredicate];
     NSUInteger foundItems = [moc countForFetchRequest:fetchBaseDirectory error:nil];
     if (foundItems > 0) {
-        basePkginfoDirectory = [[moc executeFetchRequest:fetchBaseDirectory error:nil] objectAtIndex:0];
+        allPackagesDirectory = [[moc executeFetchRequest:fetchBaseDirectory error:nil] objectAtIndex:0];
     } else {
-        basePkginfoDirectory = nil;
+        allPackagesDirectory = nil;
     }
     [fetchBaseDirectory release];
     
@@ -350,7 +350,7 @@
         NSPredicate *parentPredicate = [NSPredicate predicateWithFormat:@"originalURL == %@", [currentPackage.packageInfoURL URLByDeletingLastPathComponent]];
         DirectoryMO *aDir = [[allDirectories filteredArrayUsingPredicate:parentPredicate] objectAtIndex:0];
         [currentPackage addSourceListItemsObject:aDir];
-        [currentPackage addSourceListItemsObject:basePkginfoDirectory];
+        [currentPackage addSourceListItemsObject:allPackagesDirectory];
 
         // Loop through the catalog objects we already know about
 

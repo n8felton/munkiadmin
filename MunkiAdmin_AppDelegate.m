@@ -1815,12 +1815,14 @@
             RelationshipScanner *packageRelationships = [RelationshipScanner pkginfoScanner];
             packageRelationships.delegate = self;
             
+            NSString *repoPath = [[self.pkgsURL path] stringByStandardizingPath];
+            
             NSMutableArray *operationsToAdd = [[[NSMutableArray alloc] init] autorelease];
 			for (NSURL *fileToAdd in filesToAdd) {
 				if (fileToAdd != nil) {
                     MunkiOperation *theOp;
-                    
-                    if (![[fileToAdd relativePath] hasPrefix:[self.repoURL relativePath]]) {
+                    NSString *fileToAddPath = [[fileToAdd path] stringByStandardizingPath];
+                    if (![fileToAddPath hasPrefix:repoPath]) {
                         if (([self.defaults boolForKey:@"CopyPkgsToRepo"]) && 
                             ([[NSFileManager defaultManager] fileExistsAtPath:[self.pkgsURL relativePath]])) {
                             if ([self.defaults boolForKey:@"debug"])
@@ -2271,12 +2273,22 @@
     }
     [groupItemRequest release];
     
-    DirectoryMO *basePkgsInfoDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"Directory" inManagedObjectContext:self.managedObjectContext];
-    basePkgsInfoDirectory.originalURL = self.pkgsInfoURL;
-    basePkgsInfoDirectory.title = @"pkgsinfo";
-    basePkgsInfoDirectory.type = @"regular";
-    basePkgsInfoDirectory.parent = directoriesGroupItem;
-    basePkgsInfoDirectory.originalIndexValue = 10;
+    DirectoryMO *basePkgsInfoDirectory = nil;
+    NSFetchRequest *basePkginfoDirectoryRequest = [[NSFetchRequest alloc] init];
+    [basePkginfoDirectoryRequest setEntity:[NSEntityDescription entityForName:@"Directory" inManagedObjectContext:self.managedObjectContext]];
+    NSPredicate *originalURLPredicate = [NSPredicate predicateWithFormat:@"originalURL == %@", self.pkgsInfoURL];
+    [basePkginfoDirectoryRequest setPredicate:originalURLPredicate];
+    if ([self.managedObjectContext countForFetchRequest:basePkginfoDirectoryRequest error:nil] > 0) {
+        basePkgsInfoDirectory = [[self.managedObjectContext executeFetchRequest:basePkginfoDirectoryRequest error:nil] objectAtIndex:0];
+    } else {
+        basePkgsInfoDirectory = [NSEntityDescription insertNewObjectForEntityForName:@"Directory" inManagedObjectContext:self.managedObjectContext];
+        basePkgsInfoDirectory.originalURL = self.pkgsInfoURL;
+        basePkgsInfoDirectory.title = @"pkgsinfo";
+        basePkgsInfoDirectory.type = @"regular";
+        basePkgsInfoDirectory.parent = directoriesGroupItem;
+        basePkgsInfoDirectory.originalIndexValue = 10;
+    }
+    [basePkginfoDirectoryRequest release];
     
     NSArray *keysToget = [NSArray arrayWithObjects:NSURLNameKey, NSURLLocalizedNameKey, NSURLIsDirectoryKey, nil];
 	NSFileManager *fm = [NSFileManager defaultManager];
