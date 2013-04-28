@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/n8felton/munkiadmin.png)](https://travis-ci.org/n8felton/munkiadmin)
+
 # What is MunkiAdmin?
 
 MunkiAdmin is a GUI for managing munki repositories. It is written
